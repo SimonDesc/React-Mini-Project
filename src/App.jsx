@@ -1,24 +1,40 @@
+import logo from './react_table.png';
 import { useState } from "react"
 import { Input } from "./components/forms/Input"
 import { Checkbox } from "./components/forms/Checkbox"
+import { Range } from "./components/forms/Range"
 import { ProductCategoryRow } from "./components/products/ProductCategoryRow"
 import { ProductRow } from "./components/products/ProductRow"
 
 const PRODUCTS = [
-	{ category: "Fruits", price: "$1", stocked: true, name: "Apple" },
-	{ category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
-	{ category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
-	{ category: "Vegetables", price: "$2", stocked: true, name: "Spinach" },
-	{ category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
-	{ category: "Vegetables", price: "$1", stocked: true, name: "Peas" }
-]
+	{ category: "Components", price: "$400", stocked: true, name: "NVIDIA GeForce RTX 3080 Graphics Card" },
+	{ category: "Components", price: "$300", stocked: false, name: "AMD Ryzen 9 5900X Processor" },
+	{ category: "Components", price: "$200", stocked: true, name: "ASUS ROG Strix Z690-E Gaming Motherboard" },
+	{ category: "Components", price: "$150", stocked: true, name: "Corsair Vengeance RGB Pro 16GB RAM" },
+	{ category: "Components", price: "$100", stocked: false, name: "Samsung 970 EVO Plus 1TB NVMe SSD" },
+	{ category: "Peripherals", price: "$80", stocked: true, name: "Logitech G502 HERO Gaming Mouse" },
+	{ category: "Peripherals", price: "$150", stocked: false, name: "Razer BlackWidow Elite Mechanical Gaming Keyboard" },
+	{ category: "Peripherals", price: "$100", stocked: true, name: "SteelSeries Arctis 7 Wireless Gaming Headset" },
+	{ category: "Peripherals", price: "$50", stocked: true, name: "Logitech C920 HD Pro Webcam" },
+	{ category: "Peripherals", price: "$30", stocked: true, name: "AmazonBasics Laptop Stand" },
+	{ category: "Laptops", price: "$1200", stocked: true, name: "Dell XPS 15" },
+	{ category: "Laptops", price: "$900", stocked: false, name: "HP Pavilion 14" },
+	{ category: "Laptops", price: "$1500", stocked: true, name: "Apple MacBook Pro 13" },
+	{ category: "Monitors", price: "$300", stocked: true, name: "Dell S2721QS 27-Inch 4K Monitor" },
+	{ category: "Monitors", price: "$400", stocked: false, name: "LG 34GN850-B 34-Inch UltraWide QHD Monitor" },
+	{ category: "Monitors", price: "$200", stocked: true, name: "Acer SB220Q bi 21.5-Inch Full HD Monitor" },
+	{ category: "Networking", price: "$100", stocked: true, name: "TP-Link Archer AX21 Wi-Fi 6 Router" },
+	{ category: "Networking", price: "$50", stocked: true, name: "NETGEAR Nighthawk Smart Wi-Fi Router (R6700)" },
+	{ category: "Networking", price: "$80", stocked: false, name: "ASUS RT-AX3000 Dual Band Wi-Fi 6 Router" }
+];
+
 
 function App() {
 
 	const [showStockedOnly, setShowStockedOnly] = useState(false)
 	const [searchTerm, setSearchTerm] = useState('')
 
-	const [rangeValue, setRangeValue] = useState(3)
+	const [rangeValue, setRangeValue] = useState(1500)
 	const handleRangeValue = e => {
 		setRangeValue(e.target.value)
 	}
@@ -34,14 +50,15 @@ function App() {
 		if (search && !productName.includes(search)) {
 			return false
 		}
-		if (rangeValue > price[1]) {
+		if (Number(rangeValue) < Number(price[1])) {
 			return false
 		}
 		return true
 	})
 
 
-	return <div className="container my-5">
+	return <div className="container my-2">
+		<img src={logo} alt="Logo" className="img-fluid mx-auto d-block" />
 		<SearchBar
 			rangeValue={rangeValue}
 			onChangeRange={handleRangeValue}
@@ -55,22 +72,31 @@ function App() {
 }
 
 function SearchBar({ rangeValue, onChangeRange, searchTerm, onSearchChange, showStockedOnly, onStockedOnlyChange }) {
+
 	return <div>
 		<div className="mb-3">
 			<Input
 				value={searchTerm}
 				onChange={onSearchChange}
-				placeholder="Rechercher..."
+				placeholder="Search..."
 			/>
-			<p>Prix max : {rangeValue}$</p>
-			<input value={rangeValue} onChange={onChangeRange} type="range" className="form-range" min={0} max={5} step={1} />
-
 			<Checkbox
 				checked={showStockedOnly}
 				onChange={onStockedOnlyChange}
-				label="N'afficher que les produits en stock"
+				label="Only display products in stock"
 				id="stocked"
 			/>
+			
+			<div className="mt-4">
+				<Range
+					value={rangeValue}
+					onChange={onChangeRange}
+					min={30}
+					max={1500}
+					step={5}
+				/>
+				<p>Max. price: {rangeValue}$</p>
+			</div>
 		</div>
 	</div>
 }
@@ -94,8 +120,8 @@ function ProductTable({ products }) {
 	return <table className="table">
 		<thead>
 			<tr>
-				<th>Nom</th>
-				<th>Prix</th>
+				<th>Name</th>
+				<th>Price</th>
 			</tr>
 		</thead>
 		<tbody>
